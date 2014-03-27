@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+           id="com.baidu.fex.here.camera"
+      version="0.0.1">
+
+
+      <engines>
+        <engine name="cordova" version=">=3.4.0"/>
+      </engines>
+
+      <js-module src="www/here.js" name="here">
+            <clobbers target="here" />
+        </js-module>
+
+      <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Here">
+                <param name="android-package" value="com.baidu.fex.camera.Plugin" />
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+
+            <activity android:name="com.baidu.fex.camera.CameraActivity" android:screenOrientation="landscape">
+            </activity>
+            <meta-data android:name="com.baidu.lbsapi.API_KEY" android:value="g04gwMkXIeGVa3GbZYEa91sI" />
+
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.CAMERA" />
+            <uses-permission android:name="android.hardware.sensor.accelerometer" />
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION">
+            </uses-permission>
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION">
+            </uses-permission>
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE">
+            </uses-permission>
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE">
+            </uses-permission>
+            <uses-permission android:name="android.permission.CHANGE_WIFI_STATE">
+            </uses-permission>
+            <uses-permission android:name="android.permission.READ_PHONE_STATE">
+            </uses-permission>
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE">
+            </uses-permission>
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS">
+            </uses-permission>
+            <uses-permission android:name="android.permission.READ_LOGS">
+            </uses-permission>
+
+        </config-file>
+
+        <source-file src="src/android/libs/gson-2.2.4.jar" target-dir="libs/"/>
+        <source-file src="src/android/libs/locSDK_4.1.jar" target-dir="libs/"/>
+
+        <source-file src="src/android/libs/armeabi/liblocSDK4b.so" target-dir="libs/armeabi/"/>
+
+        <source-file src="src/android/com/baidu/fex/camera/CameraActivity.java" target-dir="src/com/baidu/fex/camera/" />
+        <source-file src="src/android/com/baidu/fex/camera/CameraPreview.java" target-dir="src/com/baidu/fex/camera/" />
+        <source-file src="src/android/com/baidu/fex/camera/Plugin.java" target-dir="src/com/baidu/fex/camera/" />
+        <source-file src="src/android/com/baidu/fex/camera/ResizableCameraPreview.java" target-dir="src/com/baidu/fex/camera/" />
+        <source-file src="src/android/com/baidu/fex/camera/Result.java" target-dir="src/com/baidu/fex/camera/" />
+        <source-file src="src/android/com/baidu/fex/camera/Utils.java" target-dir="src/com/baidu/fex/camera/" />
+
+        
+    </platform>
+
+
+</plugin>

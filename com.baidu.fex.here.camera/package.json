@@ -1,0 +1,14 @@
+{
+    "version": "0.0.1",
+    "name": "com.baidu.fex.here.camera",
+    "cordova_name": "Here",
+    "description": "Here",
+    "license": "private",
+    "repo": "https://git-wip-us.apache.org/repos/asf/cordova-plugin-console.git",
+    "issue": "https://issues.apache.org/jira/browse/CB/component/12320644",
+    "keywords": [
+        "here",
+        "timeline"
+    ],
+    "engines": []
+}
