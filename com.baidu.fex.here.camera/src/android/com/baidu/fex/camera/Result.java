@@ -92,9 +92,11 @@ public class Result implements Serializable{
 		}
 		
 		result.datetime = System.currentTimeMillis();
-		result.latitude = location.getLatitude();
-		result.lontitude = location.getLongitude();
-		result.radius = location.getRadius();
+		if(location != null){
+			result.latitude = location.getLatitude();
+			result.lontitude = location.getLongitude();
+			result.radius = location.getRadius();
+		}
 		result.orientation = orientation;
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
