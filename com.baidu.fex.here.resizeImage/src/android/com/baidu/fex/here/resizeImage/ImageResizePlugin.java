@@ -2,24 +2,6 @@
 package com.baidu.fex.here.resizeImage;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaArgs;
-import org.apache.cordova.CordovaInterface;
-import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.CordovaWebView;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.util.Base64;
 
 public class ImageResizePlugin extends CordovaPlugin {
 
@@ -161,16 +143,17 @@ public class ImageResizePlugin extends CordovaPlugin {
 	}
 
 	public static int calculateInSampleSize(BitmapFactory.Options options,
-			int ReqHeight, int ReqWidth) {
+			int ReqWidth,int ReqHeight) {
 		final int height = options.outHeight;
 		final int width = options.outWidth;
 		int inSampleSzie = 1;
 
 		if (height > ReqHeight || width > ReqWidth) {
-			if (width > height) {
-				inSampleSzie = Math.round((float) height / (float) ReqHeight);
-			} else {
+			if (ReqWidth > ReqHeight) {
 				inSampleSzie = Math.round((float) width / (float) ReqWidth);
+			} else {
+				inSampleSzie = Math.round((float) height / (float) ReqHeight);
+
 			}
 		}
 		return inSampleSzie;
