@@ -3,9 +3,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.apache.cordova.CordovaInterface;
+import org.apache.cordova.CordovaPlugin;
 
 import com.baidu.fex.camera.CameraPreview.PreviewReadyCallback;
 import com.baidu.fex.here.R;
+
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -24,6 +32,7 @@ import android.hardware.SensorManager;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -37,12 +46,12 @@ import android.webkit.WebView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-public class CameraActivity extends Activity implements OnClickListener,
-		PreviewCallback, BDLocationListener,SensorEventListener  {
+public class CameraActivity extends FragmentActivity implements OnClickListener,
+		PreviewCallback, BDLocationListener,SensorEventListener {
 	
 	public static final String PARAM_CAMERA_LISENTER = "PARAM_CAMERA_LISENTER";
 	
-	public static final String PARAM_MASK_URL = "PARAM_MASK_URL";
+	public static final String PARAM_LIST = "PARAM_LIST";
 	
 	public static interface CameraLisenter extends Serializable{
 		
@@ -60,15 +69,14 @@ public class CameraActivity extends Activity implements OnClickListener,
 	private float[] sensor;
 	private SensorManager mSensorManager;
 	private Sensor mAccelerometer;
-	private WebView webView;
 	private static CameraLisenter _cameraLisenter;
-	private String maskUrl;
+	private ArrayList<String> list;
 	
 	
-	public static void open(Context context,CameraLisenter cameraLisenter,String maskUrl) {
+	public static void open(Context context,CameraLisenter cameraLisenter,ArrayList<String> list) {
 		Intent intent = new Intent(context, CameraActivity.class);
 		_cameraLisenter = cameraLisenter;
-		intent.putExtra(PARAM_MASK_URL, maskUrl);
+		intent.putExtra(PARAM_LIST, list);
 		context.startActivity(intent);
 	}
 
@@ -77,7 +85,7 @@ public class CameraActivity extends Activity implements OnClickListener,
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		maskUrl = getIntent().getStringExtra(PARAM_MASK_URL);
+		list = getIntent().getStringArrayListExtra(PARAM_LIST);
 		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		locationClient = Utils.getLocation(this);
@@ -87,33 +95,14 @@ public class CameraActivity extends Activity implements OnClickListener,
 
 		setContentView(R.layout.activity_main);
 		mLayout = (RelativeLayout) findViewById(R.id.layout);
-		if(maskUrl != null){
-			initWebview();
-		}
 		
 		
+		getSupportFragmentManager().beginTransaction().replace(R.id.frame, Slider.instance(list)).commit();
 
 		findViewById(R.id.capture).setOnClickListener(this);
 	}
 	
-	private void initWebview(){
-		webView = (WebView) findViewById(R.id.mask);
-		webView.setBackgroundColor(0);
-		webView.getSettings().setJavaScriptEnabled(true);
-		webView.getSettings().setDomStorageEnabled(true);
-		webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-		webView.setWebChromeClient(new WebChromeClient() {
-			@Override
-			public boolean onConsoleMessage(ConsoleMessage cm) {
-				Log.d("MyApplication",
-						cm.message() + " -- From line " + cm.lineNumber()
-								+ " of " + cm.sourceId());
-				return true;
-			}
-		});
-
-		webView.loadUrl(maskUrl);
-	}
+	
 
 	@Override
 	protected void onResume() {
@@ -175,7 +164,7 @@ public class CameraActivity extends Activity implements OnClickListener,
 			File dir = new File("/sdcard/hereApp");
 			dir.mkdirs();
 			File outputFile = File.createTempFile("capture", ".jpg", dir);
-			String filepath = outputFile.toString().replace("/sdcard/","");
+//			String filepath = outputFile.toString().replace("/sdcard/","");
 			YuvImage image = new YuvImage(data, parameters.getPreviewFormat(),
 					size.width, size.height, null);
 			FileOutputStream filecon = new FileOutputStream(outputFile);
@@ -183,7 +172,7 @@ public class CameraActivity extends Activity implements OnClickListener,
 					new Rect(0, 0, image.getWidth(), image.getHeight()), 100,
 					filecon);
 			if(_cameraLisenter != null){
-				_cameraLisenter.onCapture(Result.createresult(filepath, image.getWidth(), image.getHeight(), 1, bdLocation, sensor));
+				_cameraLisenter.onCapture(Result.createresult(outputFile.toString(), image.getWidth(), image.getHeight(), 1, bdLocation, sensor));
 			}
 			_cameraLisenter = null;
 		} catch (IOException e) {
@@ -250,5 +239,6 @@ public class CameraActivity extends Activity implements OnClickListener,
 		sensor = event.values;
 		
 	}
+
 
 }

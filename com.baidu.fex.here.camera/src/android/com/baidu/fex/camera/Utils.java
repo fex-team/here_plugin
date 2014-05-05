@@ -6,10 +6,27 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.LocationClientOption.LocationMode;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class Utils {
 	
+	private static ImageLoader imageLoader = null;
 	
+	public synchronized static ImageLoader getImageLoader(Context context) {
+		if (imageLoader == null) {
+			DisplayImageOptions options = new DisplayImageOptions.Builder()
+					.cacheInMemory(true).cacheOnDisc(true).build();
+			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+					context).defaultDisplayImageOptions(options)
+					.memoryCacheSizePercentage(33).build();
+			imageLoader = ImageLoader.getInstance();
+			imageLoader.init(config);
+		}
+
+		return imageLoader;
+	}
 	
 	public static interface LocationListener{
 		public void onReceiveLocation(BDLocation location);

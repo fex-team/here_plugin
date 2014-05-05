@@ -1,8 +1,11 @@
 package com.baidu.fex.camera;
 
+import java.util.ArrayList;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaArgs;
 import org.apache.cordova.CordovaPlugin;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,13 +34,20 @@ public class Plugin extends CordovaPlugin{
 		
 		
 		try {
-			 JSONObject jsonObject = args.getJSONObject(0);
-			 final String mask = jsonObject.getString("maskUrl");
+			 JSONArray array = args.getJSONArray(0);
+			 final ArrayList<String> list = new ArrayList<String>();
+			 for(int i = 0;i<array.length();i++){
+				 String str = array.getString(i);
+				 if(str.startsWith("/sdcard/")){
+					 str = "file:///mnt"+str;
+				 }
+				 list.add(str);
+			 }
 			 cordova.getActivity().runOnUiThread(new Runnable() {
 				
 				@Override
 				public void run() {
-					 CameraActivity.open(webView.getContext(), new CameraActivity.CameraLisenter() {
+					 CameraActivity.open(cordova.getActivity(), new CameraActivity.CameraLisenter() {
 							
 							private static final long serialVersionUID = 311320768459729904L;
 
@@ -52,7 +62,7 @@ public class Plugin extends CordovaPlugin{
 								callbackContext.error(msg);
 								
 							}
-						}, mask);
+						}, list);
 					
 				}
 			});
